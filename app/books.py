@@ -3,4 +3,5 @@ class Book:
         self.id = id
         self.title = title
         self.author = author
+        self.is_borrowed = False
 books=[]
