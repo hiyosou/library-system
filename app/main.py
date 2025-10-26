@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify
 from books import Book, books
 from database import init_db
+#モデルの作成に応じてbookクラスを変更する
 def create_app():
     app = Flask(__name__)#Flaskアプリの生成
-    app.config.from_object('flask_sample.config.Config')
+    app.config.from_object('config.Config')
     
     init_db(app)
 
@@ -17,7 +18,7 @@ def add_book():
 
     book_id = len(books) + 1
 
-    new_book = Book(id=book_id, title=data.get('title'), author=data.get('author'))
+    new_book = Book(id=book_id, title=data.get('title'), author=data.get('author'))#変更するかも
     books.append(new_book)
 
     return jsonify({"message": "本の登録に成功しました。", 
