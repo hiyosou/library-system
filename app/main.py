@@ -1,6 +1,9 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,render_template
 from books import Book, books
 app = Flask(__name__)
+@app.route('/')
+def index():
+    return render_template('index.html')
 @app.route('/books', methods=['POST']) #書籍登録(POST)
 def add_book():
     data = request.get_json()
