@@ -1,0 +1,13 @@
+from flask import Blueprint
+from flask import Flask, request, jsonify,render_template
+from service import book 
+
+bp=Blueprint('books',__name__,url_prefix="")#ルーティングを行うbpオブジェクト
+
+@bp.route('/', methods=['POST'])
+def add_book():
+    return book.add_book()
+
+@bp.route('/<int:book_id>', methods=['PUT'])
+def update_book(book_id):
+    return book.update_book(book_id)
