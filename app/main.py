@@ -8,10 +8,13 @@ from models import db
 
 # === データベースファイルの保存先を指定 ===
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # app.pyがあるディレクトリの絶対パス
-DB_PATH = os.path.join(BASE_DIR,'DB','books.db')            # DBファイルパス
+DB_BOOK_PATH = os.path.join(BASE_DIR,'DB','books.db')            # DBファイルパス
+DB_USER_PATH = os.path.join(BASE_DIR,'DB','user.db')            # DBファイルパス
+
 
 # === SQLAlchemyの設定 ===
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_BOOK_PATH}'#デフォルトのデータベース(本の情報用)
+app.config['SQLALCHEMY_BINDS'] = {'users': f'sqlite:///{DB_USER_PATH}', }#ユーザーデータ用のデータベース
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app) # 初期化

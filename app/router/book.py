@@ -11,3 +11,7 @@ def add_book():
 @bp.route('/<int:book_id>', methods=['PUT'])
 def update_book(book_id):
     return book.update_book(book_id)
+
+@bp.route('/<int:book_id>', methods=['DELETE'])
+def delete_book(book_id):
+    return book.delete_book(book_id)

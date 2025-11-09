@@ -40,3 +40,19 @@ def update_book(book_id):#本の情報更新機能
                     "book": {"id": book_to_update.id,
                              "title": book_to_update.title,
                              "author": book_to_update.author}}), 200
+
+def delete_book(book_id):
+    try:
+        book_to_delete = Book.query.get(book_id)
+
+        if not book_to_delete:
+            return jsonify({"message": "書籍が見つかりません。"}), 404
+
+        db.session.delete(book_to_delete)
+        db.session.commit()
+
+        return jsonify({"message": "書籍を削除しました。"}), 200
+
+    except Exception as e:
+        db.session.rollback()  # エラー時にロールバック
+        return jsonify({"message": "削除中にエラーが発生しました。", "error": str(e)}), 500

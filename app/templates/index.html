@@ -60,6 +60,27 @@
             document.getElementById("putresult").innerText = data.message;
         });
    </script>
+   <h2>本を削除</h2>
+<form id="deleteBookForm">
+    <input type="number" id="deleteId" placeholder="書籍ID" required>
+    <button type="submit">削除</button>
+</form>
+<div id="deleteresult" style="margin-top:20px; color:red;"></div>
+
+<script>
+    document.getElementById("deleteBookForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const id = document.getElementById("deleteId").value;
+
+        const response = await fetch(`/books/${id}`, {
+            method: "DELETE",
+        });
+
+        const data = await response.json();
+        document.getElementById("deleteresult").innerText = data.message;
+    });
+</script>
 
    
 </body>
