@@ -8,3 +8,5 @@ services:
     tty: true
     volumes:
       - ./opt:/root/opt
+    ports:
+      - "5000:5000"

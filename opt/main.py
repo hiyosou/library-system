@@ -7,7 +7,7 @@ app = Flask(__name__)
 from models import db
 
 # === データベースファイルの保存先を指定 ===
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # app.pyがあるディレクトリの絶対パス
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # main.pyがあるディレクトリの絶対パス
 DB_BOOK_PATH = os.path.join(BASE_DIR,'DB','books.db')            # DBファイルパス
 DB_USER_PATH = os.path.join(BASE_DIR,'DB','user.db')            # DBファイルパス
 
