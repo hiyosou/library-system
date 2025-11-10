@@ -56,3 +56,12 @@ def delete_book(book_id):
     except Exception as e:
         db.session.rollback()  # エラー時にロールバック
         return jsonify({"message": "削除中にエラーが発生しました。", "error": str(e)}), 500
+
+    # 書籍一覧取得機能
+    def get_books():
+        books = Book.query.all()
+        books_list = [
+            {"id": book.id, "title": book.title, "author": book.author}
+            for book in books
+        ]
+        return jsonify(books_list)

@@ -19,3 +19,7 @@ RUN pip install flask
 RUN pip install flask_sqlalchemy
 
 COPY opt/ /opt/
+WORKDIR /opt
+ENV FLASK_APP=main.py
+ENV FLASK_RUN_HOST=0.0.0.0
+CMD ["flask", "run"]

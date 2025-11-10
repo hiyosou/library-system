@@ -32,6 +32,13 @@
             document.getElementById("pushresult").innerText = data.message;
         });
     </script>
+
+        <h2>書籍一覧</h2>
+        <ul>
+            {% for book in books %}
+                <li>ID: {{ book.id }} / タイトル: {{ book.title }} / 著者: {{ book.author }}</li>
+            {% endfor %}
+        </ul>
     
     <h2>本の情報を更新</h2>
     <form id="updateBookForm">

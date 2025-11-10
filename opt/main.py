@@ -28,8 +28,9 @@ app.register_blueprint(book.bp,url_prefix="/books")#ルート設定の分割
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    books = Book.query.all()
+    return render_template('index.html', books=books)
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+  app.run(host='0.0.0.0', port=5000, debug=True)
