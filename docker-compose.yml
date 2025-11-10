@@ -1,12 +1,11 @@
-version: '3'
 services:
   python3:
     restart: always
     build: .
     container_name: 'python3'
-    working_dir: '/root/'
+    working_dir: '/opt'
     tty: true
     volumes:
-      - ./opt:/root/opt
+      - ./opt:/opt
     ports:
       - "5000:5000"
