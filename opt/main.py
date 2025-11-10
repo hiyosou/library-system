@@ -5,7 +5,8 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 from models import db
-
+from flask_cors import CORS
+CORS(app)
 # === データベースファイルの保存先を指定 ===
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # main.pyがあるディレクトリの絶対パス
 DB_BOOK_PATH = os.path.join(BASE_DIR,'DB','books.db')            # DBファイルパス

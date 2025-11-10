@@ -17,6 +17,8 @@ RUN pip install --upgrade setuptools
 RUN python -m pip install jupyterlab
 RUN pip install flask
 RUN pip install flask_sqlalchemy
+RUN pip install flask-cors
+
 
 COPY opt/ /opt/
 WORKDIR /opt
