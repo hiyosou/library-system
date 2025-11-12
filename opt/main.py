@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify,render_template
+from flask import Flask, request, jsonify,render_template,redirect,url_for,session
 # from books import Book, books
 from router import book
 import os
@@ -33,9 +33,16 @@ def index():
 @app.route("/search")
 def search_page():
     return render_template("search.html")
+@app.route("/login")
+def login():
+    return render_template("login.html")
 @app.route("/index")
 def index_alias():
-    return render_template("index.html") 
+    # ログインしていなければ login.html にリダイレクト
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+    return render_template("index.html")
+
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=5000, debug=True)
