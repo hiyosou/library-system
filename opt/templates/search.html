@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>📚 書籍検索</title>
+
+    <style>
+        body { font-family: "Yu Gothic"; background:#F5F6FB; padding:40px 10%; }
+        h1 { color:#303585; border-left:8px solid #303585; padding-left:15px; }
+        #searchBox {
+            width: 300px; padding: 10px 14px;
+            border: 1px solid #C8CBE6; border-radius: 6px;
+        }
+        #bookList { list-style:none; padding-left:0; margin-top:15px; }
+        #bookList li {
+            background:white; padding:12px; margin:6px 0;
+            border-radius:8px; border:1px solid #D5D8EF;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🔍 書籍検索</h1>
+
+<input type="text" id="searchBox" placeholder="タイトル・著者で検索...">
+
+<ul id="bookList"></ul>
+
+<h2>書籍一覧</h2>
+<button id="loadBooksBtn">一覧を読み込む</button>
+<ul id="booksList"></ul>
+<div id="loadresult"></div>
+<script>
+let allBooks = [];
+
+async function loadBooks() {
+    const response = await fetch("/books");
+    allBooks = await response.json();
+    displayBooks(allBooks);
+}
+
+function displayBooks(list) {
+    const ul = document.getElementById("bookList");
+    ul.innerHTML = "";
+    list.forEach(book => {
+        const li = document.createElement("li");
+        li.textContent = `${book.title} (${book.author})`;
+        ul.appendChild(li);
+    });
+}
+
+document.getElementById("searchBox").addEventListener("input", e => {
+    const key = e.target.value.toLowerCase();
+    const filtered = allBooks.filter(book =>
+        book.title.toLowerCase().includes(key) ||
+        book.author.toLowerCase().includes(key)
+    );
+    displayBooks(filtered);
+});
+
+loadBooks();
+
+
+async function fetchBooks() {
+    const res = await fetch("/books");
+    allBooks = await res.json();
+    return allBooks;
+}
+
+function displayFullList(list) {
+    const ul = document.getElementById("booksList");
+    ul.innerHTML = "";
+    list.forEach(book => {
+        const li = document.createElement("li");
+        li.textContent = `ID: ${book.id} / ${book.title} (${book.author})`;
+        ul.appendChild(li);
+    });
+}
+
+window.addEventListener("DOMContentLoaded", async () => {
+    const books = await fetchBooks();
+    displayFullList(books);
+});
+
+document.getElementById("loadBooksBtn").addEventListener("click", async () => {
+    document.getElementById("loadresult").innerText = "読み込み中...";
+    const books = await fetchBooks();
+    displayFullList(books);
+});
+
+</script>
+<a href="/index">📚 書籍管理ページへ(権限が必要です)</a>
+
+</body>
+</html>
