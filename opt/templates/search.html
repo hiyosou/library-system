@@ -70,7 +70,7 @@ loadBooks();
 
 
 async function fetchBooks() {
-    const res = await fetch(`${APP_BASE_URL}/books`);
+    const res = await fetch(`https://library.nu-tf-lab.jp/books`);
     allBooks = await res.json();
     return allBooks;
 }
