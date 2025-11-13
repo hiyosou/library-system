@@ -20,8 +20,14 @@ app.secret_key = SECRET_KEY
 
 # === データベースファイルの保存先を指定 ===
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # main.pyがあるディレクトリの絶対パス
-DB_BOOK_PATH = os.path.join(BASE_DIR,'DB','books.db')            # DBファイルパス
-DB_USER_PATH = os.path.join(BASE_DIR,'DB','user.db')            # DBファイルパス
+DB_DIR = os.path.join(BASE_DIR, 'DB')  # DBディレクトリパス
+
+# DBディレクトリが存在しない場合は作成
+if not os.path.exists(DB_DIR):
+    os.makedirs(DB_DIR)
+
+DB_BOOK_PATH = os.path.join(DB_DIR, 'books.db')            # DBファイルパス
+DB_USER_PATH = os.path.join(DB_DIR, 'user.db')            # DBファイルパス
 
 
 # === SQLAlchemyの設定 ===

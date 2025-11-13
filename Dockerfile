@@ -19,7 +19,9 @@ RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
 # create an unprivileged user and fix permissions
 RUN useradd --create-home appuser \
-	&& chown -R appuser:appuser /opt
+	&& chown -R appuser:appuser /opt \
+	&& mkdir -p /opt/DB \
+	&& chown -R appuser:appuser /opt/DB
 
 EXPOSE 5000
 
