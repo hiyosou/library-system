@@ -26,10 +26,14 @@ def redirect_to_https():
 # セッション設定
 app.secret_key = SECRET_KEY
 
-# HTTPSでのセキュアなセッションクッキー設定
-app.config['SESSION_COOKIE_SECURE'] = True  # HTTPSのみでクッキーを送信
+# HTTPSでのセキュアなセッションクッキー設定（本番環境のみ）
+is_production = os.getenv('FLASK_ENV') == 'production'
+app.config['SESSION_COOKIE_SECURE'] = is_production  # HTTPSのみでクッキーを送信（本番のみ）
 app.config['SESSION_COOKIE_HTTPONLY'] = True  # JavaScriptからのアクセスを防ぐ
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # CSRF対策
+
+print(f"[INFO] Flask Environment: {os.getenv('FLASK_ENV', 'development')}")
+print(f"[INFO] SESSION_COOKIE_SECURE: {app.config['SESSION_COOKIE_SECURE']}")
 
 # === MySQLデータベースの設定 ===
 MYSQL_HOST = os.getenv('MYSQL_HOST', 'localhost')
@@ -56,16 +60,35 @@ app.register_blueprint(auth.bp,url_prefix="/auth")#OAuth認証ルート
 # アプリケーションのベースURL
 APP_BASE_URL = os.getenv('APP_BASE_URL', 'http://localhost:5000')
 
+# デバッグ: 起動時にAPP_BASE_URLを出力
+print(f"[INFO] APP_BASE_URL is set to: {APP_BASE_URL}")
+
 @app.route('/')
 def index():
+    print(f"[DEBUG] Rendering search.html with app_base_url={APP_BASE_URL}")
     return render_template('search.html', app_base_url=APP_BASE_URL)
 @app.route("/search")
 def search_page():
+    print(f"[DEBUG] Rendering search.html with app_base_url={APP_BASE_URL}")
     return render_template("search.html", app_base_url=APP_BASE_URL)
 @app.route("/login")
 def login():
     # OAuth認証フローにリダイレクト
     return redirect(url_for("auth.login"))
+
+@app.route("/debug/env")
+def debug_env():
+    """デバッグ用: 環境変数とリクエストヘッダーを確認"""
+    return jsonify({
+        "APP_BASE_URL": APP_BASE_URL,
+        "X-Forwarded-Proto": request.headers.get('X-Forwarded-Proto'),
+        "X-Forwarded-For": request.headers.get('X-Forwarded-For'),
+        "Host": request.headers.get('Host'),
+        "request_scheme": request.scheme,
+        "request_url": request.url,
+        "all_headers": dict(request.headers)
+    })
+
 @app.route("/index")
 def index_alias():
     # ログインしていなければ login.html にリダイレクト

@@ -50,6 +50,19 @@ docker compose up -d --build
 - アプリケーション: `http://localhost:5000`
 - MySQL: `localhost:3306`
 
+**本番環境（HTTPS）の場合:**
+1. `.env.production.example`を参考に`.env`ファイルを作成
+2. `APP_BASE_URL=https://library.nu-tf-lab.jp`を設定（HTTPSのURLを指定すること！）
+3. Nginxの設定で`X-Forwarded-Proto`ヘッダーを送信するよう設定（`nginx.conf.example`参照）
+
+```bash
+# 本番環境での起動
+docker compose up -d --build
+
+# ログの確認
+docker compose logs -f app
+```
+
 ### 3. ローカルでの起動（開発用）
 
 ```bash
@@ -84,6 +97,14 @@ python main.py
 - `GET /auth/logout` - ログアウト
 - `GET /auth/user` - 現在のユーザー情報取得
 - `GET /auth/validate` - トークンの有効性検証
+- `GET /debug/env` - デバッグ用環境変数確認（開発/トラブルシューティング用）
+
+## トラブルシューティング
+
+Mixed Contentエラーやその他の問題が発生した場合は、以下を参照してください:
+- [トラブルシューティングガイド](documents/トラブルシューティング_Mixed_Content.md)
+- [Nginx設定例](nginx.conf.example)
+- [本番環境の.env設定例](.env.production.example)
 
 ## 参考
 
