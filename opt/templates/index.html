@@ -83,10 +83,15 @@
 <script>
 let allBooks = [];
 
+// ベースURLを取得（HTTPSを強制）
+const getBaseUrl = () => {
+    return window.location.origin.replace('http://', 'https://');
+};
+
 // ユーザー情報を取得して表示
 async function loadUserInfo() {
     try {
-        const res = await fetch("/auth/user");
+        const res = await fetch(`${getBaseUrl()}/auth/user`);
         if (res.ok) {
             const userInfo = await res.json();
             document.getElementById("userName").textContent = `ようこそ、${userInfo.name || userInfo.email}さん`;
@@ -107,7 +112,7 @@ function logout() {
 
 // 書籍一覧を取得
 async function fetchBooks() {
-    const res = await fetch("/books");
+    const res = await fetch(`${getBaseUrl()}/books`);
     allBooks = await res.json();
     return allBooks;
 }
@@ -144,7 +149,7 @@ document.getElementById("addBookForm").addEventListener("submit", async e => {
     const title = document.getElementById("title").value;
     const author = document.getElementById("author").value;
 
-    const res = await fetch("/books", {
+    const res = await fetch(`${getBaseUrl()}/books`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ title, author })
@@ -166,7 +171,7 @@ document.getElementById("updateBookForm").addEventListener("submit", async e => 
     const newTitle = document.getElementById("newTitle").value;
     const newAuthor = document.getElementById("newAuthor").value;
 
-    const res = await fetch(`/books/${id}`, {
+    const res = await fetch(`${getBaseUrl()}/books/${id}`, {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ title: newTitle, author: newAuthor })
@@ -187,7 +192,7 @@ document.getElementById("deleteBookForm").addEventListener("submit", async e => 
     e.preventDefault();
     const id = document.getElementById("deleteId").value;
 
-    const res = await fetch(`/books/${id}`, { method: "DELETE" });
+    const res = await fetch(`${getBaseUrl()}/books/${id}`, { method: "DELETE" });
     const data = await res.json();
     document.getElementById("deleteresult").innerText = data.message;
 

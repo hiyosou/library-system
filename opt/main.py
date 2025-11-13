@@ -15,8 +15,21 @@ from config import SECRET_KEY
 
 CORS(app)
 
+# HTTPSリダイレクト用のミドルウェア
+@app.before_request
+def redirect_to_https():
+    """本番環境でHTTPSを強制する"""
+    if request.headers.get('X-Forwarded-Proto') == 'http':
+        url = request.url.replace('http://', 'https://', 1)
+        return redirect(url, code=301)
+
 # セッション設定
 app.secret_key = SECRET_KEY
+
+# HTTPSでのセキュアなセッションクッキー設定
+app.config['SESSION_COOKIE_SECURE'] = True  # HTTPSのみでクッキーを送信
+app.config['SESSION_COOKIE_HTTPONLY'] = True  # JavaScriptからのアクセスを防ぐ
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # CSRF対策
 
 # === MySQLデータベースの設定 ===
 MYSQL_HOST = os.getenv('MYSQL_HOST', 'localhost')

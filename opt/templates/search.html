@@ -33,8 +33,13 @@
 <script>
 let allBooks = [];
 
+// ベースURLを取得（HTTPSを強制）
+const getBaseUrl = () => {
+    return window.location.origin.replace('http://', 'https://');
+};
+
 async function loadBooks() {
-    const response = await fetch("/books");
+    const response = await fetch(`${getBaseUrl()}/books`);
     allBooks = await response.json();
     displayBooks(allBooks);
 }
@@ -62,7 +67,7 @@ loadBooks();
 
 
 async function fetchBooks() {
-    const res = await fetch("/books");
+    const res = await fetch(`${getBaseUrl()}/books`);
     allBooks = await res.json();
     return allBooks;
 }
