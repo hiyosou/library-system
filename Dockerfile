@@ -1,27 +1,30 @@
-FROM python:3
+FROM python:3.11-slim
+
+# keep image small and predictable
+ENV PYTHONDONTWRITEBYTECODE=1 \
+	PYTHONUNBUFFERED=1
+
 USER root
 
-RUN apt-get update
-RUN apt-get -y install locales && \
-    localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
-ENV LANG ja_JP.UTF-8
-ENV LANGUAGE ja_JP:ja
-ENV LC_ALL ja_JP.UTF-8
-ENV TZ JST-9
-ENV TERM xterm
-
-RUN apt-get install -y vim less
-RUN pip install --upgrade pip
-RUN pip install --upgrade setuptools
-
-RUN python -m pip install jupyterlab
-RUN pip install flask
-RUN pip install flask_sqlalchemy
-RUN pip install flask-cors
-
-
+# ソースコードは最初にコピー
 COPY opt/ /opt/
 WORKDIR /opt
-ENV FLASK_APP=main.py
-ENV FLASK_RUN_HOST=0.0.0.0
-CMD ["flask", "run"]
+
+# copy requirements after source (per requirement)
+COPY requirements.txt /opt/
+
+# install minimal runtime deps and gunicorn for running the app
+# --no-cache-dir to keep image small
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
+
+# create an unprivileged user and fix permissions
+RUN useradd --create-home appuser \
+	&& chown -R appuser:appuser /opt
+
+EXPOSE 5000
+
+USER appuser
+
+# Use gunicorn with a single worker by default (lightweight)
+# main:app を起点にしてアプリを実行
+CMD ["gunicorn", "-w", "1", "-b", "0.0.0.0:5000", "main:app"]

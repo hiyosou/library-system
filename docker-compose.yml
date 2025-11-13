@@ -1,11 +1,20 @@
+version: '3.8'
+
 services:
-  python3:
-    restart: always
+  app:
     build: .
-    container_name: 'python3'
-    working_dir: '/opt'
-    tty: true
-    volumes:
-      - ./opt:/opt
+    container_name: library_app
+    restart: unless-stopped
+    working_dir: /opt
     ports:
       - "5000:5000"
+    # データベースはホストとマウントして永続化
+    volumes:
+      - ./DB:/opt/DB
+    environment:
+      - FLASK_ENV=production
+    # keep logs accessible on host if needed
+    # volumes:
+    #   - ./logs:/opt/logs
+
+# no named volumes required; DB uses bind mount to ./DB
