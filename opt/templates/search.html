@@ -41,7 +41,7 @@ const getBaseUrl = () => {
 async function loadBooks() {
     console.log(`${getBaseUrl()}/books`)
     try{
-        const response = await fetch(`${getBaseUrl()}/books`);
+        const response = await fetch(`/books`);
         allBooks = await response.json();
     } catch(e) {
         console.log(e);
