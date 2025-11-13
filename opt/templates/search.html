@@ -33,15 +33,13 @@
 <script>
 let allBooks = [];
 
-// ベースURLを取得（HTTPSを強制）
-const getBaseUrl = () => {
-    return window.location.origin.replace('http://', 'https://');
-};
+// サーバーから渡されたベースURL
+const APP_BASE_URL = "{{ app_base_url }}";
 
 async function loadBooks() {
-    console.log(`${getBaseUrl()}/books`)
+    console.log(`${APP_BASE_URL}/books`)
     try{
-        const response = await fetch(`/books`);
+        const response = await fetch(`${APP_BASE_URL}/books`);
         allBooks = await response.json();
     } catch(e) {
         console.log(e);
@@ -72,7 +70,7 @@ loadBooks();
 
 
 async function fetchBooks() {
-    const res = await fetch(`${getBaseUrl()}/books`);
+    const res = await fetch(`${APP_BASE_URL}/books`);
     allBooks = await res.json();
     return allBooks;
 }

@@ -53,12 +53,15 @@ with app.app_context():
 app.register_blueprint(book.bp,url_prefix="/books")#ルート設定の分割
 app.register_blueprint(auth.bp,url_prefix="/auth")#OAuth認証ルート
 
+# アプリケーションのベースURL
+APP_BASE_URL = os.getenv('APP_BASE_URL', 'http://localhost:5000')
+
 @app.route('/')
 def index():
-    return render_template('search.html')
+    return render_template('search.html', app_base_url=APP_BASE_URL)
 @app.route("/search")
 def search_page():
-    return render_template("search.html")
+    return render_template("search.html", app_base_url=APP_BASE_URL)
 @app.route("/login")
 def login():
     # OAuth認証フローにリダイレクト
@@ -68,7 +71,7 @@ def index_alias():
     # ログインしていなければ login.html にリダイレクト
     if not session.get("logged_in"):
         return redirect(url_for("login"))
-    return render_template("index.html")
+    return render_template("index.html", app_base_url=APP_BASE_URL)
 
 
 if __name__ == '__main__':

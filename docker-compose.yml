@@ -37,6 +37,8 @@ services:
       - MYSQL_DATABASE=library_db
       - MYSQL_USER=${MYSQL_USER:-library_user}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:-library_pass}
+      # アプリケーションのベースURL
+      - APP_BASE_URL=${APP_BASE_URL:-http://localhost:5000}
       # OAuth設定（.envファイルから読み込み）
       - AUTH_SERVER_BASE_URL_BROWSER=${AUTH_SERVER_BASE_URL_BROWSER:-http://localhost:3030}
       - AUTH_SERVER_BASE_URL_SERVER=${AUTH_SERVER_BASE_URL_SERVER:-http://host.docker.internal:3030}

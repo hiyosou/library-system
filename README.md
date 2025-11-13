@@ -24,13 +24,15 @@ cp .env.example .env
 
 `.env`ファイルの設定項目:
 
-- `AUTH_SERVER_BASE_URL`: 認証サーバーのベースURL（例: http://localhost:3030）
+- `AUTH_SERVER_BASE_URL_BROWSER`: ブラウザからアクセスする認証サーバーのURL(例: http://localhost:3030)
+- `AUTH_SERVER_BASE_URL_SERVER`: サーバー間通信用の認証サーバーURL(例: http://host.docker.internal:3030)
 - `OAUTH_CLIENT_ID`: 認証サーバーから発行されたクライアントID
 - `OAUTH_CLIENT_SECRET`: 認証サーバーから発行されたクライアントシークレット
-- `OAUTH_REDIRECT_URI`: コールバックURI（例: http://localhost:5000/auth/callback）
+- `OAUTH_REDIRECT_URI`: コールバックURI(例: http://localhost:5000/auth/callback)
 - `API_KEY`: サーバー間通信用のAPIキー(認証サーバーのサービスアカウントから取得)
 - `OAUTH_SCOPE`: 必要なスコープ(例: read:profile)
 - `SECRET_KEY`: Flaskセッション用のシークレットキー(本番環境では必ず変更)
+- `APP_BASE_URL`: アプリケーションのベースURL(ローカル: http://localhost:5000, 本番: https://library.nu-tf-lab.jp)
 - `MYSQL_ROOT_PASSWORD`: MySQL rootパスワード(デフォルト: rootpassword)
 - `MYSQL_USER`: MySQLユーザー名(デフォルト: library_user)
 - `MYSQL_PASSWORD`: MySQLパスワード(デフォルト: library_pass)
