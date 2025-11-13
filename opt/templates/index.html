@@ -96,7 +96,7 @@ async function loadUserInfo() {
             const userInfo = await res.json();
             document.getElementById("userName").textContent = `ようこそ、${userInfo.name || userInfo.email}さん`;
         } else {
-            window.location.href = "/login";
+            window.location.href = `${getBaseUrl()}/login`;
         }
     } catch (error) {
         console.error("ユーザー情報の取得に失敗しました", error);
@@ -106,7 +106,7 @@ async function loadUserInfo() {
 // ログアウト
 function logout() {
     if (confirm("ログアウトしますか?")) {
-        window.location.href = "/auth/logout";
+        window.location.href = `${getBaseUrl()}/auth/logout`;
     }
 }
 
