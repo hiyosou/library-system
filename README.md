@@ -28,15 +28,25 @@ cp .env.example .env
 - `OAUTH_CLIENT_ID`: 認証サーバーから発行されたクライアントID
 - `OAUTH_CLIENT_SECRET`: 認証サーバーから発行されたクライアントシークレット
 - `OAUTH_REDIRECT_URI`: コールバックURI（例: http://localhost:5000/auth/callback）
-- `API_KEY`: サーバー間通信用のAPIキー（認証サーバーのサービスアカウントから取得）
-- `OAUTH_SCOPE`: 必要なスコープ（例: read:profile）
-- `SECRET_KEY`: Flaskセッション用のシークレットキー（本番環境では必ず変更）
+- `API_KEY`: サーバー間通信用のAPIキー(認証サーバーのサービスアカウントから取得)
+- `OAUTH_SCOPE`: 必要なスコープ(例: read:profile)
+- `SECRET_KEY`: Flaskセッション用のシークレットキー(本番環境では必ず変更)
+- `MYSQL_ROOT_PASSWORD`: MySQL rootパスワード(デフォルト: rootpassword)
+- `MYSQL_USER`: MySQLユーザー名(デフォルト: library_user)
+- `MYSQL_PASSWORD`: MySQLパスワード(デフォルト: library_pass)
+- `MYSQL_DATABASE`: データベース名(デフォルト: library_db)
 
 ### 2. Dockerでの起動
+
+**推奨**: データベースにMySQLを使用します。
 
 ```bash
 docker compose up -d --build
 ```
+
+起動後、以下のサービスが利用可能になります:
+- アプリケーション: `http://localhost:5000`
+- MySQL: `localhost:3306`
 
 ### 3. ローカルでの起動（開発用）
 

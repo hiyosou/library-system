@@ -1,4 +1,24 @@
 services:
+  mysql:
+    image: mysql:8.0
+    container_name: library_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: library_db
+      MYSQL_USER: ${MYSQL_USER:-library_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-library_pass}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   app:
     build: .
     container_name: library_app
@@ -6,11 +26,17 @@ services:
     working_dir: /opt
     ports:
       - "5000:5000"
-    # データベースはDocker volumeで永続化
-    volumes:
-      - db_data:/opt/DB
+    depends_on:
+      mysql:
+        condition: service_healthy
     environment:
       - FLASK_ENV=production
+      # MySQL接続設定
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=library_db
+      - MYSQL_USER=${MYSQL_USER:-library_user}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-library_pass}
       # OAuth設定（.envファイルから読み込み）
       - AUTH_SERVER_BASE_URL_BROWSER=${AUTH_SERVER_BASE_URL_BROWSER:-http://localhost:3030}
       - AUTH_SERVER_BASE_URL_SERVER=${AUTH_SERVER_BASE_URL_SERVER:-http://host.docker.internal:3030}
@@ -29,4 +55,4 @@ services:
 
 # DBデータをDocker volumeで永続化
 volumes:
-  db_data:
+  mysql_data:

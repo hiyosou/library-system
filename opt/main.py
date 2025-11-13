@@ -18,21 +18,16 @@ CORS(app)
 # セッション設定
 app.secret_key = SECRET_KEY
 
-# === データベースファイルの保存先を指定 ===
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # main.pyがあるディレクトリの絶対パス
-DB_DIR = os.path.join(BASE_DIR, 'DB')  # DBディレクトリパス
-
-# DBディレクトリが存在しない場合は作成
-if not os.path.exists(DB_DIR):
-    os.makedirs(DB_DIR)
-
-DB_BOOK_PATH = os.path.join(DB_DIR, 'books.db')            # DBファイルパス
-DB_USER_PATH = os.path.join(DB_DIR, 'user.db')            # DBファイルパス
-
+# === MySQLデータベースの設定 ===
+MYSQL_HOST = os.getenv('MYSQL_HOST', 'localhost')
+MYSQL_PORT = os.getenv('MYSQL_PORT', '3306')
+MYSQL_DATABASE = os.getenv('MYSQL_DATABASE', 'library_db')
+MYSQL_USER = os.getenv('MYSQL_USER', 'library_user')
+MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD', 'library_pass')
 
 # === SQLAlchemyの設定 ===
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_BOOK_PATH}'#デフォルトのデータベース(本の情報用)
-app.config['SQLALCHEMY_BINDS'] = {'users': f'sqlite:///{DB_USER_PATH}', }#ユーザーデータ用のデータベース
+# pymysqlを使用したMySQL接続文字列
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app) # 初期化

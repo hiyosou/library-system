@@ -3,5 +3,8 @@ flask_sqlalchemy
 flask-cors
 requests
 python-dotenv
+# MySQL driver
+pymysql
+cryptography
 # production WSGI server
 gunicorn
