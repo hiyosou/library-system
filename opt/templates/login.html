@@ -1,12 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ログイン - 図書管理システム</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .login-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .login-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #1976d2;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .login-button:hover {
+            background-color: #1565c0;
+        }
+        .info {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-    <h1>ログイン</h1>
-    <a href="localhost:3030/oauth/client/authorize?client_id=&redirect_uri=localhost:5000/index">ログインする</a>
+    <div class="login-container">
+        <h1>図書管理システム</h1>
+        <p class="info">LabNexusアカウントでログインしてください</p>
+        <a href="/auth/login" class="login-button">ログインする</a>
+    </div>
 </body>
 </html>

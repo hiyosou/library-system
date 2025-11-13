@@ -16,11 +16,36 @@
         ul { list-style:none; padding-left:0; }
         ul li { background:white; padding:12px; border-radius:8px; margin:6px 0; border:1px solid #D5D8EF; }
         div { margin-top:10px; }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .user-info {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: 1px solid #D5D8EF;
+        }
+        .logout-btn {
+            background: #d32f2f;
+            margin-left: 10px;
+        }
+        .logout-btn:hover {
+            background: #b71c1c;
+        }
     </style>
 </head>
 <body>
 
-<h1>📚 書籍管理（登録・編集・削除）</h1>
+<div class="header-container">
+    <h1>📚 書籍管理（登録・編集・削除）</h1>
+    <div class="user-info">
+        <span id="userName">ロード中...</span>
+        <button class="logout-btn" onclick="logout()">ログアウト</button>
+    </div>
+</div>
 
 <!-- 新規登録 -->
 <h2>新しい本を登録</h2>
@@ -58,6 +83,28 @@
 <script>
 let allBooks = [];
 
+// ユーザー情報を取得して表示
+async function loadUserInfo() {
+    try {
+        const res = await fetch("/auth/user");
+        if (res.ok) {
+            const userInfo = await res.json();
+            document.getElementById("userName").textContent = `ようこそ、${userInfo.name || userInfo.email}さん`;
+        } else {
+            window.location.href = "/login";
+        }
+    } catch (error) {
+        console.error("ユーザー情報の取得に失敗しました", error);
+    }
+}
+
+// ログアウト
+function logout() {
+    if (confirm("ログアウトしますか?")) {
+        window.location.href = "/auth/logout";
+    }
+}
+
 // 書籍一覧を取得
 async function fetchBooks() {
     const res = await fetch("/books");
@@ -76,8 +123,9 @@ function displayFullList(list) {
     });
 }
 
-// ページ読み込み時に自動で一覧表示
+// ページ読み込み時に自動で一覧表示とユーザー情報を取得
 window.addEventListener("DOMContentLoaded", async () => {
+    await loadUserInfo();
     const books = await fetchBooks();
     displayFullList(books);
 });

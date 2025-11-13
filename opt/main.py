@@ -1,12 +1,23 @@
 from flask import Flask, request, jsonify,render_template,redirect,url_for,session
 # from books import Book, books
-from router import book
+from router import book, auth
 import os
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+
+# 環境変数を読み込む
+load_dotenv()
+
 app = Flask(__name__)
 from models import db
 from flask_cors import CORS
+from config import SECRET_KEY
+
 CORS(app)
+
+# セッション設定
+app.secret_key = SECRET_KEY
+
 # === データベースファイルの保存先を指定 ===
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # main.pyがあるディレクトリの絶対パス
 DB_BOOK_PATH = os.path.join(BASE_DIR,'DB','books.db')            # DBファイルパス
@@ -26,6 +37,7 @@ with app.app_context():
     db.create_all()  # データベースとテーブルを作成
 
 app.register_blueprint(book.bp,url_prefix="/books")#ルート設定の分割
+app.register_blueprint(auth.bp,url_prefix="/auth")#OAuth認証ルート
 
 @app.route('/')
 def index():
@@ -35,7 +47,8 @@ def search_page():
     return render_template("search.html")
 @app.route("/login")
 def login():
-    return render_template("login.html")
+    # OAuth認証フローにリダイレクト
+    return redirect(url_for("auth.login"))
 @app.route("/index")
 def index_alias():
     # ログインしていなければ login.html にリダイレクト
