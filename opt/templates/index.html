@@ -2,192 +2,155 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>📚 高橋研究室 書籍管理システム</title>
+    <title>📚 書籍管理</title>
+    <style>
+        body { font-family:"Yu Gothic"; background:#F5F6FB; padding:40px 10%; }
+        h1 { color:#303585; border-left:8px solid #303585; padding-left:15px; }
+        h2 { color:#303585; margin-top:30px; }
+        form { margin-bottom:20px; }
+        input { padding:10px; border:1px solid #C8CBE6; border-radius:6px; }
+        button {
+            background:#4B4FA3; color:white; padding:10px 20px;
+            border:none; border-radius:6px; cursor:pointer;
+        }
+        ul { list-style:none; padding-left:0; }
+        ul li { background:white; padding:12px; border-radius:8px; margin:6px 0; border:1px solid #D5D8EF; }
+        div { margin-top:10px; }
+    </style>
 </head>
 <body>
-    <h1>📚高橋研究室書籍管理システム</h1>
 
-    <!-- -------------------------
-         ✅ 新規登録
-    -------------------------- -->
-    <h2>新しい本を登録</h2>
-    <form id="addBookForm">
-        <input type="text" id="title" placeholder="タイトル" required>
-        <input type="text" id="author" placeholder="著者" required>
-        <button type="submit">登録</button>
-    </form>
-    <div id="pushresult" style="margin-top:20px; color:green;"></div>
+<h1>📚 書籍管理（登録・編集・削除）</h1>
 
+<!-- 新規登録 -->
+<h2>新しい本を登録</h2>
+<form id="addBookForm">
+    <input type="text" id="title" placeholder="タイトル" required>
+    <input type="text" id="author" placeholder="著者" required>
+    <button type="submit">登録</button>
+</form>
+<div id="pushresult"></div>
 
-    <!-- -------------------------
-         ✅ 本の検索
-    -------------------------- -->
-    <h2>本を検索</h2>
-    <input type="text" id="searchBox" placeholder="タイトル・著者で検索...">
-    <ul id="bookList"></ul>
+<!-- 一覧 -->
+<h2>書籍一覧</h2>
+<button id="loadBooksBtn">一覧を読み込む</button>
+<ul id="booksList"></ul>
+<div id="loadresult"></div>
 
+<!-- 更新 -->
+<h2>書籍更新</h2>
+<form id="updateBookForm">
+    <input type="number" id="updateId" placeholder="ID" required>
+    <input type="text" id="newTitle" placeholder="新しいタイトル">
+    <input type="text" id="newAuthor" placeholder="新しい著者">
+    <button type="submit">更新</button>
+</form>
+<div id="putresult"></div>
 
-    <!-- -------------------------
-         ✅ 書籍一覧表示
-    -------------------------- -->
-    <h2>書籍一覧</h2>
-    <button id="loadBooksBtn">書籍一覧を読み込む</button>
-    <ul id="booksList"></ul>
-    <div id="loadresult" style="margin-top:10px; color:blue;"></div>
+<!-- 削除 -->
+<h2>書籍削除</h2>
+<form id="deleteBookForm">
+    <input type="number" id="deleteId" placeholder="ID" required>
+    <button type="submit">削除</button>
+</form>
+<div id="deleteresult"></div>
 
+<script>
+let allBooks = [];
 
-    <!-- -------------------------
-         ✅ 更新
-    -------------------------- -->
-    <h2>本の情報を更新</h2>
-    <form id="updateBookForm">
-        <input type="number" id="updateId" placeholder="書籍ID" required>
-        <input type="text" id="newTitle" placeholder="新しいタイトル">
-        <input type="text" id="newAuthor" placeholder="新しい著者">
-        <button type="submit">更新</button>
-    </form>
-    <div id="putresult" style="margin-top:20px; color:green;"></div>
+// 書籍一覧を取得
+async function fetchBooks() {
+    const res = await fetch("/books");
+    allBooks = await res.json();
+    return allBooks;
+}
 
+// 書籍一覧を表示
+function displayFullList(list) {
+    const ul = document.getElementById("booksList");
+    ul.innerHTML = "";
+    list.forEach(book => {
+        const li = document.createElement("li");
+        li.textContent = `ID: ${book.id} / ${book.title} (${book.author})`;
+        ul.appendChild(li);
+    });
+}
 
-    <!-- -------------------------
-         ✅ 削除
-    -------------------------- -->
-    <h2>本を削除</h2>
-    <form id="deleteBookForm">
-        <input type="number" id="deleteId" placeholder="書籍ID" required>
-        <button type="submit">削除</button>
-    </form>
-    <div id="deleteresult" style="margin-top:20px; color:red;"></div>
+// ページ読み込み時に自動で一覧表示
+window.addEventListener("DOMContentLoaded", async () => {
+    const books = await fetchBooks();
+    displayFullList(books);
+});
 
+// 手動で一覧取得
+document.getElementById("loadBooksBtn").addEventListener("click", async () => {
+    document.getElementById("loadresult").innerText = "読み込み中...";
+    const books = await fetchBooks();
+    displayFullList(books);
+    document.getElementById("loadresult").innerText = `${books.length}件の書籍を読み込みました`;
+});
 
-    <script>
-        // ✅ 一元管理する本データ
-        let allBooks = [];
+// 新規登録
+document.getElementById("addBookForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const title = document.getElementById("title").value;
+    const author = document.getElementById("author").value;
 
-        // ✅ API から書籍一覧を取得し allBooks に保存
-        async function fetchBooks() {
-            try {
-                const response = await fetch("/books");
-                allBooks = await response.json();
-                return allBooks;
-            } catch (error) {
-                console.error("API エラー:", error);
-                return [];
-            }
-        }
+    const res = await fetch("/books", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ title, author })
+    });
+    const data = await res.json();
+    document.getElementById("pushresult").innerText = data.message;
 
-        // ✅ 検索表示用（searchBox用）
-        function displaySearchBooks(list) {
-            const bookList = document.getElementById("bookList");
-            bookList.innerHTML = "";
-            list.forEach(book => {
-                const li = document.createElement("li");
-                li.textContent = `${book.title} (${book.author})`;
-                bookList.appendChild(li);
-            });
-        }
+    const books = await fetchBooks();
+    displayFullList(books);
 
-        // ✅ 一覧表示用
-        function displayFullList(list) {
-            const target = document.getElementById("booksList");
-            target.innerHTML = "";
-            list.forEach(book => {
-                const li = document.createElement("li");
-                li.textContent = `ID: ${book.id} / タイトル: ${book.title} / 著者: ${book.author}`;
-                target.appendChild(li);
-            });
-            document.getElementById("loadresult").innerText = `${list.length}件の書籍を読み込みました`;
-        }
+    document.getElementById("title").value = "";
+    document.getElementById("author").value = "";
+});
 
-        // ✅ ページ読み込み時に自動で一覧取得
-        window.addEventListener("DOMContentLoaded", async () => {
-            const books = await fetchBooks();
-            displayFullList(books);
-            displaySearchBooks(books);
-        });
+// 更新
+document.getElementById("updateBookForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const id = document.getElementById("updateId").value;
+    const newTitle = document.getElementById("newTitle").value;
+    const newAuthor = document.getElementById("newAuthor").value;
 
-        // ✅ 手動読み込みボタン
-        document.getElementById("loadBooksBtn").addEventListener("click", async () => {
-            document.getElementById("loadresult").innerText = "読み込み中...";
-            const books = await fetchBooks();
-            displayFullList(books);
-        });
+    const res = await fetch(`/books/${id}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ title: newTitle, author: newAuthor })
+    });
+    const data = await res.json();
+    document.getElementById("putresult").innerText = data.message;
 
-        // ✅ 検索処理
-        document.getElementById("searchBox").addEventListener("input", (e) => {
-            const keyword = e.target.value.toLowerCase();
-            const filtered = allBooks.filter(book =>
-                book.title.toLowerCase().includes(keyword) ||
-                book.author.toLowerCase().includes(keyword)
-            );
-            displaySearchBooks(filtered);
-        });
+    const books = await fetchBooks();
+    displayFullList(books);
 
-        // ✅ 新規登録
-        document.getElementById("addBookForm").addEventListener("submit", async event => {
-            event.preventDefault();
-            const title = document.getElementById("title").value;
-            const author = document.getElementById("author").value;
+    document.getElementById("updateId").value = "";
+    document.getElementById("newTitle").value = "";
+    document.getElementById("newAuthor").value = "";
+});
 
-            const response = await fetch("/books", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({ title, author })
-            });
+// 削除
+document.getElementById("deleteBookForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const id = document.getElementById("deleteId").value;
 
-            const data = await response.json();
-            document.getElementById("pushresult").innerText = data.message;
+    const res = await fetch(`/books/${id}`, { method: "DELETE" });
+    const data = await res.json();
+    document.getElementById("deleteresult").innerText = data.message;
 
-            // 再読み込み
-            const books = await fetchBooks();
-            displayFullList(books);
-            displaySearchBooks(books);
+    const books = await fetchBooks();
+    displayFullList(books);
 
-            // フォームクリア
-            document.getElementById("title").value = "";
-            document.getElementById("author").value = "";
-        });
+    document.getElementById("deleteId").value = "";
+});
+</script>
 
-        // ✅ 更新
-        document.getElementById("updateBookForm").addEventListener("submit", async event => {
-            event.preventDefault();
-            const id = document.getElementById("updateId").value;
-            const newTitle = document.getElementById("newTitle").value;
-            const newAuthor = document.getElementById("newAuthor").value;
+<a href="/search">🔍 検索ページへ</a>
 
-            const response = await fetch(`/books/${id}`, {
-                method: "PUT",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({ title: newTitle, author: newAuthor })
-            });
-
-            const data = await response.json();
-            document.getElementById("putresult").innerText = data.message;
-
-            const books = await fetchBooks();
-            displayFullList(books);
-            displaySearchBooks(books);
-
-            document.getElementById("updateId").value = "";
-            document.getElementById("newTitle").value = "";
-            document.getElementById("newAuthor").value = "";
-        });
-
-        // ✅ 削除
-        document.getElementById("deleteBookForm").addEventListener("submit", async event => {
-            event.preventDefault();
-            const id = document.getElementById("deleteId").value;
-
-            const response = await fetch(`/books/${id}`, { method: "DELETE" });
-            const data = await response.json();
-            document.getElementById("deleteresult").innerText = data.message;
-
-            const books = await fetchBooks();
-            displayFullList(books);
-            displaySearchBooks(books);
-
-            document.getElementById("deleteId").value = "";
-        });
-    </script>
 </body>
 </html>
