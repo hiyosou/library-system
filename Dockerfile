@@ -27,6 +27,5 @@ EXPOSE 5000
 
 USER appuser
 
-# Use gunicorn with a single worker by default (lightweight)
-# main:app を起点にしてアプリを実行
-CMD ["gunicorn", "-w", "1", "-b", "0.0.0.0:5000", "main:app"]
+# Flaskの開発サーバーで起動（デバッグ用）
+CMD ["python", "main.py"]
