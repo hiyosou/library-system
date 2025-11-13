@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     build: .
@@ -8,9 +6,9 @@ services:
     working_dir: /opt
     ports:
       - "5000:5000"
-    # データベースはホストとマウントして永続化
+    # データベースはDocker volumeで永続化
     volumes:
-      - ./DB:/opt/DB
+      - db_data:/opt/DB
     environment:
       - FLASK_ENV=production
       # OAuth設定（.envファイルから読み込み）
@@ -29,4 +27,6 @@ services:
     # volumes:
     #   - ./logs:/opt/logs
 
-# no named volumes required; DB uses bind mount to ./DB
+# DBデータをDocker volumeで永続化
+volumes:
+  db_data:
